@@ -12,16 +12,16 @@ app.use(express.json({ limit: '10mb' }));
 const PORT = process.env.PORT || 3000;
 const API_KEY = process.env.API_KEY || 'change-me-in-env';
 
+// ─── Health check (public) ────────────────────────────────────────
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', ffmpeg: checkFfmpeg() });
+});
+
 // ─── Auth middleware ───────────────────────────────────────────────
 app.use((req, res, next) => {
   const key = req.headers['x-api-key'];
   if (key !== API_KEY) return res.status(401).json({ error: 'Unauthorized' });
   next();
-});
-
-// ─── Health check ─────────────────────────────────────────────────
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', ffmpeg: checkFfmpeg() });
 });
 
 function checkFfmpeg() {
